@@ -1,0 +1,102 @@
+package com.revature.test;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mrunit.mapreduce.MapDriver;
+import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
+import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.revature.map.GenderFemaleLess;
+import com.revature.reduce.GenderFemaleLessReducer;
+
+
+
+public class GenderFemaleLessTest {
+	
+	private MapDriver<LongWritable, Text, Text,DoubleWritable> mapDriver;
+	private ReduceDriver<Text, DoubleWritable, Text, DoubleWritable> reduceDriver; 
+	private MapReduceDriver<LongWritable,Text, Text,DoubleWritable,Text, DoubleWritable> mapReduceDriver;
+	
+	@Before
+	public void setup(){
+		GenderFemaleLess mapper = new GenderFemaleLess();
+		
+		mapDriver = new MapDriver<>();
+
+		mapDriver.setMapper(mapper);
+		
+		
+		
+		GenderFemaleLessReducer reducer = new GenderFemaleLessReducer();
+		reduceDriver = new ReduceDriver<>();
+		reduceDriver.setReducer(reducer);
+		
+		mapReduceDriver = new MapReduceDriver<>();
+		mapReduceDriver.setMapper(mapper);
+		mapReduceDriver.setReducer(reducer);
+		
+		
+	}
+	
+	
+	
+	@Test 
+	public void testMapper(){
+		//mock input 
+		mapDriver.withInput(new LongWritable(1), new Text("\"Netherlands\",\"NLD\",\"Gross graduation ratio, tertiary, female (%)\",\"SE.TER.CMPL.FE.ZS\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"39.15177\",\"41.3239\",\"42.73691\",\"45.34334\",\"51.08203\",\"51.43235\",\"55.0549\",\"56.05995\",\"54.5188\",\"52.10433\",\"52.32941\",\"52.51582\",\"53.6965\",\"58.09252\",\"53.1819\",\"53.18322\",\"\",\"\","));
+		
+		//expected output 
+		mapDriver.withOutput(new Text("Netherlands"), new DoubleWritable(53.6965));
+		mapDriver.withOutput(new Text("Netherlands"), new DoubleWritable(58.09252));
+		mapDriver.withOutput(new Text("Netherlands"), new DoubleWritable(53.1819));
+		mapDriver.withOutput(new Text("Netherlands"), new DoubleWritable(53.18322));
+		mapDriver.withOutput(new Text("Netherlands"), new DoubleWritable());
+		mapDriver.withOutput(new Text("Netherlands"), new DoubleWritable());
+		
+		
+		
+		mapDriver.runTest();
+		
+		
+	}
+	
+	
+	@Test
+	public void testReducer(){
+		
+		List<IntWritable> values = new ArrayList<>();
+		values.add(new IntWritable(1));
+		values.add(new IntWritable(1));
+		
+		reduceDriver.withInput(new Text("cat"), values);
+		reduceDriver.withOutput(new Text("cat"),new IntWritable(2));
+		
+		reduceDriver.runTest();
+	}
+	
+	
+	@Test
+	public void testMapReduce(){
+		//mock input 
+		mapReduceDriver.withInput(new LongWritable(1), new Text("cat cat dog"));
+		
+		//Expected Final Output
+		
+		
+		
+		mapReduceDriver.withOutput(new Text("cat"),new IntWritable(2));
+		mapReduceDriver.withOutput(new Text("dog"),new IntWritable(1));
+		
+		mapReduceDriver.runTest();
+	}
+	
+	
+}

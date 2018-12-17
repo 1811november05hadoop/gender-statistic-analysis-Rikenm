@@ -1,0 +1,42 @@
+package com.revature.map;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable>{
+	
+	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException  {
+		
+		String line = value.toString();
+		
+		//splits on any white space
+		
+		List<String> countries = new ArrayList<>();
+		countries.add("AFG");
+		countries.add("NPL");
+		
+		
+		int count = 0;
+		boolean flag = true;
+		for (String word : line.split(",")) {
+			
+
+			if(word.equals("SE.PRM.CMPL.FE.ZS")) {
+				count++;
+				if(count == 22){
+					
+					context.write(new Text(word), new IntWritable(1));
+					count=0;
+				}
+				
+
+			}
+		}
+	}
+}

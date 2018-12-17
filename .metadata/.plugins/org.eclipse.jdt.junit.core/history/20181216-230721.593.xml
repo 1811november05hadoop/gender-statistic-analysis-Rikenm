@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="AverageEduFemaleTest (1)" project="AverageEducationFemale" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="com.revature.test.AverageEduFemaleTest" time="0.793">
+    <testcase name="testMapper" classname="com.revature.test.AverageEduFemaleTest" time="0.793"/>
+  </testsuite>
+</testrun>

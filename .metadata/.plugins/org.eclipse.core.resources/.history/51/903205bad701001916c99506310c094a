@@ -1,0 +1,53 @@
+package com.revature.test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mrunit.mapreduce.MapDriver;
+import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
+import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.revature.map.PercentChangeMaleMapper;
+
+
+public class PercentChangeMaleTest {
+	
+	private MapDriver<LongWritable, Text, Text, DoubleWritable> mapDriver;
+	
+	
+	@Before
+	public void setup(){
+		PercentChangeMaleMapper mapper = new PercentChangeMaleMapper();
+		
+		mapDriver = new MapDriver<>();
+		mapDriver.setMapper(mapper);
+		
+	
+		
+	}
+	
+	
+	
+	@Test 
+	public void testMapper(){
+		//mock input 
+		
+		mapDriver.withInput(new LongWritable(1), new Text("\"Australia\",\"AUS\",\"Employment to population ratio, 15+, male (%) (modeled ILO estimate)\",\"SL.EMP.TOTL.SP.MA.ZS\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"67.4100036621094\",\"65.9000015258789\",\"65.3119964599609\",\"66.4130020141602\",\"67.5849990844727\",\"67.3649978637695\",\"66.9629974365234\",\"67.177001953125\",\"67.4700012207031\",\"67.8079986572266\",\"67.1060028076172\",\"67.2880020141602\",\"67.4580001831055\",\"67.8529968261719\",\"68.6490020751953\",\"68.9260025024414\",\"69.6640014648438\",\"69.7919998168945\",\"68.1989974975586\",\"68.7870025634766\",\"68.7320022583008\",\"68.0989990234375\",\"67.3509979248047\",\"66.7649993896484\",\"66.629997253418\",\"66.7689971923828\",,"));
+		
+		//expected output 
+		mapDriver.withOutput(new Text("Australia"), new DoubleWritable(-0.6800003051757812));
+		
+		
+		mapDriver.runTest();
+		
+	}
+	
+	
+	
+}

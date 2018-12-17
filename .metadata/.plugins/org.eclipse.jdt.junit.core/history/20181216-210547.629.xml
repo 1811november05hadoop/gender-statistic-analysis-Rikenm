@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="GenderFemaleLessTest" project="EducationFemale" tests="2" started="2" failures="0" errors="0" ignored="0">
+  <testsuite name="com.revature.test.GenderFemaleLessTest" time="0.795">
+    <testcase name="testReducer" classname="com.revature.test.GenderFemaleLessTest" time="0.723"/>
+    <testcase name="testMapper" classname="com.revature.test.GenderFemaleLessTest" time="0.072"/>
+  </testsuite>
+</testrun>

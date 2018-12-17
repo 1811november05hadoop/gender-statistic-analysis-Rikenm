@@ -1,0 +1,97 @@
+package com.revature.test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mrunit.mapreduce.MapDriver;
+import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
+import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.revature.map.IntersectionMapper;
+import com.revature.reduce.InterSectionReducer;
+
+
+public class IntersectionTest {
+	
+	private MapDriver<LongWritable, Text, Text,DoubleWritable> mapDriver;
+	private ReduceDriver<Text, DoubleWritable, Text, Text> reduceDriver; 
+	private MapReduceDriver<LongWritable,Text, Text,DoubleWritable,Text, Text> mapReduceDriver;
+	
+	@Before
+	public void setup(){
+		IntersectionMapper mapper = new IntersectionMapper();
+		
+		mapDriver = new MapDriver<>();
+		mapDriver.setMapper(mapper);
+		
+		
+		
+		InterSectionReducer reducer = new InterSectionReducer();
+		reduceDriver = new ReduceDriver<>();
+		reduceDriver.setReducer(reducer);
+		
+		mapReduceDriver = new MapReduceDriver<>();
+		mapReduceDriver.setMapper(mapper);
+		mapReduceDriver.setReducer(reducer);
+		
+		
+	}
+	
+	
+	
+	@Test 
+	public void testMapper(){
+		//mock input 
+		mapDriver.withInput(new LongWritable(1), new Text("\"Egypt, Arab Rep.\",\"EGY\",\"Legislation explicitly criminalizes marital rape (1=yes; 0=no)\",\"SG.LEG.MRRP\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"0\",\"\","));
+		mapDriver.withInput(new LongWritable(1), new Text("\"Egypt, Arab Rep.\",\"EGY\",\"Married women are required by law to obey their husbands (1=yes; 0=no)\",\"SG.LAW.OBHB.MR\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"1\",\"\",\"1\",\"\",\"1\",\"\",\"1\",\"\","));
+		
+		//expected output 
+		
+		mapDriver.withOutput(new Text("Egypt, Arab Rep."), new DoubleWritable(1.0));
+		mapDriver.withOutput(new Text("Egypt, Arab Rep."), new DoubleWritable(1.0));
+		
+		mapDriver.runTest();
+		
+		
+	}
+	
+	
+	@Test
+	public void testReducer(){
+		
+		List<DoubleWritable> values = new ArrayList<>();
+		values.add(new DoubleWritable(1));
+		values.add(new DoubleWritable(1));
+		
+		reduceDriver.withInput(new Text("Egypt, Arab Rep."), values);
+		reduceDriver.withOutput(new Text("Egypt, Arab Rep."),new Text(""));
+		
+		reduceDriver.runTest();
+	}
+	
+	
+	@Test
+	public void testMapReduce(){
+		//mock input 
+		
+		mapReduceDriver.withInput(new LongWritable(1), new Text("\"Egypt, Arab Rep.\",\"EGY\",\"Legislation explicitly criminalizes marital rape (1=yes; 0=no)\",\"SG.LEG.MRRP\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"0\",\"\","));
+		mapReduceDriver.withInput(new LongWritable(1), new Text("\"Egypt, Arab Rep.\",\"EGY\",\"Married women are required by law to obey their husbands (1=yes; 0=no)\",\"SG.LAW.OBHB.MR\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"1\",\"\",\"1\",\"\",\"1\",\"\",\"1\",\"\","));
+		
+		//Expected Final Output
+		
+		
+		
+		mapReduceDriver.withOutput(new Text("cat"),new IntWritable(2));
+		mapReduceDriver.withOutput(new Text("dog"),new IntWritable(1));
+		
+		mapReduceDriver.runTest();
+	}
+	
+	
+}

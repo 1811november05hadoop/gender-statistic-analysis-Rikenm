@@ -1,0 +1,85 @@
+package com.revature.map;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.apache.hadoop.io.DoubleWritable;
+//import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class WordCountMapper extends Mapper<LongWritable, Text, Text,DoubleWritable>{
+	
+	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException  {
+		
+		
+		
+		
+		String line = value.toString();
+		
+		//splits on any white space
+		
+		
+		
+		String country="";
+		int count = 0 ;
+		int innerCount = 0; 
+		float previous = 0;
+		int outerCount = 1;
+		boolean flag = false;
+		if(line.matches("(.*)SE.TER.CMPL.FE.ZS(.*)")){
+			//System.out.println(line);
+			
+			for (String word : line.split(",")) {
+				
+							
+							if(count == 0){
+								// country 
+								country = word; 
+								// System.out.println(" country: "+country);
+								country = country.replace("\"", "");
+								flag = country.equals("United States");
+								// System.out.println(" flag: "+flag);
+								
+							}else if(count >= 47 && flag){
+								System.out.println(country);
+								System.out.println("initial data: "+word);
+								
+								if(!word.equals("\"\"")){
+								    
+									System.out.println(word);
+									
+									String valueWithoutQuotes = word.replace("\"", "");
+									if(innerCount >= 1){
+
+										context.write(new Text(country),new DoubleWritable((Float.parseFloat(valueWithoutQuotes) - previous)/outerCount));
+										
+									}
+									previous = Float.parseFloat(valueWithoutQuotes);
+									
+									outerCount = 1;
+									innerCount++;
+									
+								}else{
+									outerCount++;
+								}
+								
+								
+							}
+							
+							
+							count++;
+			
+			}
+				
+		}
+		
+		
+		
+		
+		
+		
+	}
+}
